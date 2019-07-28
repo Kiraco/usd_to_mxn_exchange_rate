@@ -25,6 +25,7 @@ func getDate() string {
 	} else {
 		month = fmt.Sprintf("%d%s", date.Month(), "/")
 	}
+	fmt.Println(day)
 	return fmt.Sprintf("%s%s%d", "26/", month, date.Year())
 }
 
@@ -59,14 +60,10 @@ func getTodaysRate() string {
 	return match
 }
 
-func (provider DiarioOficialFederacion) name() string {
-	return "Diario Oficial de la Federacion"
-}
-
-func (provider DiarioOficialFederacion) rate() string {
-	return getTodaysRate()
-}
-
-func (provider DiarioOficialFederacion) updatedAt() string {
-	return getDate()
+func GetDiarioOficialFederacionProvider() Provider {
+	return Provider{
+		Name:      "Diario Oficial de la Federacion",
+		Rate:      getTodaysRate(),
+		UpdatedAt: getDate(),
+	}
 }
