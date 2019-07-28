@@ -9,7 +9,7 @@ import (
 	"strings"
 )
 
-func getTodaysDiarioRate() string {
+func getTodaysBanxicoRate() string {
 	apiURL := "http://www.banxico.org.mx/tipcamb/tipCamIHAction.do"
 	data := url.Values{}
 	dateString := getDate()
@@ -39,11 +39,11 @@ func getTodaysDiarioRate() string {
 	return match
 }
 
-// GetDiarioOficialFederacionProvider - returns diario oficial provider
-func GetDiarioOficialFederacionProvider() Provider {
+// GetBanxicoProvider - gets Banxico provider
+func GetBanxicoProvider() Provider {
 	return Provider{
-		Name:      "Diario Oficial de la Federacion",
-		Rate:      getTodaysDiarioRate(),
+		Name:      "Banxico",
+		Rate:      getTodaysBanxicoRate(),
 		UpdatedAt: getDate(),
 	}
 }
