@@ -30,8 +30,7 @@ func getDiarioFormattedDate() string {
 	} else {
 		month = fmt.Sprintf("%d", date.Month())
 	}
-	fmt.Println(day)
-	return fmt.Sprintf("%s/%s/%d", "26", month, date.Year())
+	return fmt.Sprintf("%s/%s/%d", day, month, date.Year())
 }
 
 func getTodaysDiarioRate() string {

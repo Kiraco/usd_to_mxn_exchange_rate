@@ -4,6 +4,7 @@ import 'package:flutter_web/material.dart';
 import 'package:usd_to_mxn_exchange_rate/models/provider_model.dart';
 import 'package:http/http.dart' as http;
 
+// Performs the fetch of rates from go server
 class API {
   static Future getProvidersData() {
     var url = "http://localhost:3000/rates";
@@ -12,7 +13,6 @@ class API {
   }
 }
 
-// #docregion RWS-var
 class ExchangeRatesState extends State<ExchangeRates> {
   final _biggerFont = const TextStyle(
       fontSize: 20.0,
@@ -22,6 +22,7 @@ class ExchangeRatesState extends State<ExchangeRates> {
   final _smallerFont =
       const TextStyle(fontSize: 14.0, wordSpacing: 2, letterSpacing: .5);
 
+  // we get the providers, is a Future and resolved during the initState() of the view
   var providers = List<ProviderModel>();
   _getProviders() {
     API.getProvidersData().then((response) {
@@ -41,7 +42,6 @@ class ExchangeRatesState extends State<ExchangeRates> {
     super.dispose();
   }
 
-  // #docregion _buildExchangeRates
   Widget _buildExchangeRates() {
     return ListView.builder(
         padding: const EdgeInsets.all(12.0),
@@ -51,11 +51,8 @@ class ExchangeRatesState extends State<ExchangeRates> {
           return _buildRow(provider);
         });
   }
-  // #enddocregion _buildExchangeRates
 
-  // #docregion _buildRow
   Widget _buildRow(ProviderModel provider) {
-    // Get data from DB provider.getProviderModel();
     return ListTile(
       contentPadding: EdgeInsets.fromLTRB(1, 5, 1, 5),
       title: Text(provider.getName(), style: _biggerFont),
@@ -67,9 +64,7 @@ class ExchangeRatesState extends State<ExchangeRates> {
           style: _smallerFont),
     );
   }
-  // #enddocregion _buildRow
 
-  // #docregion RWS-build
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -90,7 +85,6 @@ class ExchangeRatesState extends State<ExchangeRates> {
     );
   }
 }
-// #enddocregion RWS-var
 
 class ExchangeRates extends StatefulWidget {
   @override

@@ -29,9 +29,9 @@ func getBanxicoFormattedDate() (api string, db string) {
 	} else {
 		month = fmt.Sprintf("%d", date.Month())
 	}
-	fmt.Println(day)
-	return fmt.Sprintf("%d-%s-%s", date.Year(), month, "26"), fmt.Sprintf("%s/%s/%d", "26", month, date.Year())
+	return fmt.Sprintf("%d-%s-%s", date.Year(), month, "26"), fmt.Sprintf("%s/%s/%d", day, month, date.Year())
 }
+
 func getTodaysBanxicoRate() string {
 	date, _ := getBanxicoFormattedDate()
 	apiURL := baseURL + date + "/" + date + "/?token=" + token
