@@ -131,9 +131,6 @@ class _LoginPageState extends State<LoginSignUpPage> {
                 : Text('Create account',
                     style: TextStyle(fontSize: 20.0, color: Colors.white)),
             onPressed: () {
-              print(_email);
-              print(_password);
-              print(_errorMessage);
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => ExchangeRates()),

@@ -2,8 +2,11 @@ package main
 
 import (
 	"database/sql"
+	"encoding/json"
 	"fmt"
+	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
+	_ "github.com/lib/pq"
 	"io"
 	"log"
 	"net/http"
@@ -35,22 +38,25 @@ func UpdateRates(w http.ResponseWriter, req *http.Request) {
 	go getFixerProvider(db)
 	go getBanxicoProvider(db)
 	time.Sleep(2 * time.Second)
-	fmt.Fprintf(w, "Rates Updated!")
+	io.WriteString(w, "Rates updated...!\n")
 }
 
 func GetRates(w http.ResponseWriter, req *http.Request) {
 	tables := []string{"banxico", "fixer", "diario_oficial"}
 	db := postgres.ConnectDB()
 	defer db.Close()
+	providers := []provider.Provider{}
 	for _, table := range tables {
 		tmpProvider := provider.Provider{}
-		query := fmt.Sprintf("SELECT * FROM %s ORDER BY updatedAt DESC LIMIT 1", table)
-		db.QueryRow(query).Scan(&tmpProvider)
-		println(tmpProvider.ID.String())
-		println(tmpProvider.Name)
-		println(tmpProvider.Rate)
-		println(tmpProvider.UpdatedAt)
+		query := fmt.Sprintf("SELECT * FROM %s LIMIT 1", table)
+		db.QueryRow(query).Scan(&tmpProvider.ID, &tmpProvider.Name, &tmpProvider.Rate, &tmpProvider.UpdatedAt)
+		providers = append(providers, tmpProvider)
 	}
+	resp, err := json.Marshal(providers)
+	if err != nil {
+		log.Fatal(err)
+	}
+	w.Write(resp)
 }
 
 func Ping(w http.ResponseWriter, req *http.Request) {
@@ -60,7 +66,7 @@ func Ping(w http.ResponseWriter, req *http.Request) {
 func main() {
 	router := mux.NewRouter()
 	router.HandleFunc("/", Ping)
-	router.HandleFunc("/update", UpdateRates).Methods("GET")
-	router.HandleFunc("/rates", GetRates).Methods("GET")
-	log.Fatal(http.ListenAndServe("8081", router))
+	router.HandleFunc("/update", UpdateRates)
+	router.HandleFunc("/rates", GetRates)
+	log.Fatal(http.ListenAndServe(":3000", handlers.CORS(handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type", "Authorization"}), handlers.AllowedMethods([]string{"GET", "POST", "PUT", "HEAD", "OPTIONS"}), handlers.AllowedOrigins([]string{"*"}))(router)))
 }

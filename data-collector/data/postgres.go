@@ -1,6 +1,8 @@
 package data
 
 import (
+	_ "github.com/lib/pq"
+
 	"database/sql"
 	"fmt"
 	provider "github.com/Kiraco/usd_to_mxn_exchange_rate/data-collector/provider"

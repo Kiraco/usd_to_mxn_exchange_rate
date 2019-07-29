@@ -1,5 +1,16 @@
+import 'dart:convert';
+
 import 'package:flutter_web/material.dart';
 import 'package:usd_to_mxn_exchange_rate/models/provider_model.dart';
+import 'package:http/http.dart' as http;
+
+class API {
+  static Future getProvidersData() {
+    var url = "http://localhost:3000/rates";
+    var headers = {"Content-Type": "application/json"};
+    return http.get(url, headers: headers);
+  }
+}
 
 // #docregion RWS-var
 class ExchangeRatesState extends State<ExchangeRates> {
@@ -10,16 +21,33 @@ class ExchangeRatesState extends State<ExchangeRates> {
       letterSpacing: 1);
   final _smallerFont =
       const TextStyle(fontSize: 14.0, wordSpacing: 2, letterSpacing: .5);
-  // #enddocregion RWS-var
+
+  var providers = List<ProviderModel>();
+  _getProviders() {
+    API.getProvidersData().then((response) {
+      setState(() {
+        Iterable list = json.decode(response.body);
+        providers = list.map((model) => ProviderModel.fromJson(model)).toList();
+      });
+    });
+  }
+
+  initState() {
+    super.initState();
+    _getProviders();
+  }
+
+  dispose() {
+    super.dispose();
+  }
 
   // #docregion _buildExchangeRates
   Widget _buildExchangeRates() {
-    var providersData = getProvidersData();
     return ListView.builder(
         padding: const EdgeInsets.all(12.0),
-        itemCount: providersData.length,
+        itemCount: providers.length,
         itemBuilder: /*1*/ (context, i) {
-          final provider = providersData[i];
+          final provider = providers[i];
           return _buildRow(provider);
         });
   }
@@ -30,7 +58,7 @@ class ExchangeRatesState extends State<ExchangeRates> {
     // Get data from DB provider.getProviderModel();
     return ListTile(
       contentPadding: EdgeInsets.fromLTRB(1, 5, 1, 5),
-      title: Text(provider.getProvider(), style: _biggerFont),
+      title: Text(provider.getName(), style: _biggerFont),
       subtitle: Text(
           "Rate: " +
               provider.getRate() +
@@ -61,29 +89,6 @@ class ExchangeRatesState extends State<ExchangeRates> {
       ),
     );
   }
-
-  getProvidersData() async {
-    List providerModels;
-    var connection = PostgreSQLConnection(host, port, dbName,
-        username: user, password: pass);
-    /*await connection.open();
-    for (final priv in providers) {
-     
-      List<List<dynamic>> results =
-          await connection.query(query, substitutionValues: {"table": priv});
-      ProviderModel providerModel = ProviderModel();
-      for (final row in results) {
-        print(row);
-        providerModel.setProvider("provider");
-        providerModel.setRate("rate");
-        providerModel.setUpdatedAt("udpated");
-      }
-      providerModels.add(providerModel);
-    }*/
-    return providerModels;
-  }
-  // #enddocregion RWS-build
-  // #docregion RWS-var
 }
 // #enddocregion RWS-var
 

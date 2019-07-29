@@ -1,5 +1,6 @@
 class ProviderModel {
-  String _provider = "";
+  String _id = "";
+  String _name = "";
   String _rate = "";
   String _updatedAt = "";
 
@@ -7,16 +8,16 @@ class ProviderModel {
     _updatedAt = date;
   }
 
-  void setProvider(String provider) {
-    _provider = provider;
+  void setName(String provider) {
+    _name = provider;
   }
 
   void setRate(String value) {
     _rate = value;
   }
 
-  String getProvider() {
-    return _provider;
+  String getName() {
+    return _name;
   }
 
   String getRate() {
@@ -25,5 +26,15 @@ class ProviderModel {
 
   String getUpdatedAt() {
     return _updatedAt;
+  }
+
+  ProviderModel.fromJson(Map json)
+      : _id = json['ID'],
+        _name = json['Name'],
+        _rate = json['Rate'],
+        _updatedAt = json['UpdatedAt'];
+
+  Map toJson() {
+    return {'ID': _id, 'Name': _name, 'Rate': _rate, 'UpdatedAt': _updatedAt};
   }
 }
