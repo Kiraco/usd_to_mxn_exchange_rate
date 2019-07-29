@@ -1,13 +1,5 @@
-import 'dart:html' as prefix0;
-
 import 'package:flutter_web/material.dart';
 import 'package:usd_to_mxn_exchange_rate/models/provider_model.dart';
-import 'package:usd_to_mxn_exchange_rate/providers/banxico.dart';
-import 'package:usd_to_mxn_exchange_rate/providers/diario_oficial_federacion.dart';
-import 'package:usd_to_mxn_exchange_rate/providers/fixer.dart';
-import 'package:usd_to_mxn_exchange_rate/providers/provider.dart';
-
-final providers = [Banxico(), Fixer(), DiarioOficialFederacion()];
 
 // #docregion RWS-var
 class ExchangeRatesState extends State<ExchangeRates> {
@@ -22,27 +14,28 @@ class ExchangeRatesState extends State<ExchangeRates> {
 
   // #docregion _buildExchangeRates
   Widget _buildExchangeRates() {
+    var providersData = getProvidersData();
     return ListView.builder(
         padding: const EdgeInsets.all(12.0),
-        itemCount: providers.length,
+        itemCount: providersData.length,
         itemBuilder: /*1*/ (context, i) {
-          final provider = providers[i];
+          final provider = providersData[i];
           return _buildRow(provider);
         });
   }
   // #enddocregion _buildExchangeRates
 
   // #docregion _buildRow
-  Widget _buildRow(Provider provider) {
-    ProviderModel providerModel = provider.getProviderModel();
+  Widget _buildRow(ProviderModel provider) {
+    // Get data from DB provider.getProviderModel();
     return ListTile(
       contentPadding: EdgeInsets.fromLTRB(1, 5, 1, 5),
-      title: Text(providerModel.getProvider(), style: _biggerFont),
+      title: Text(provider.getProvider(), style: _biggerFont),
       subtitle: Text(
           "Rate: " +
-              providerModel.getValue() +
+              provider.getRate() +
               "\nLast update: " +
-              providerModel.getUpdatedAt(),
+              provider.getUpdatedAt(),
           style: _smallerFont),
     );
   }
@@ -67,6 +60,27 @@ class ExchangeRatesState extends State<ExchangeRates> {
         ),
       ),
     );
+  }
+
+  getProvidersData() async {
+    List providerModels;
+    var connection = PostgreSQLConnection(host, port, dbName,
+        username: user, password: pass);
+    /*await connection.open();
+    for (final priv in providers) {
+     
+      List<List<dynamic>> results =
+          await connection.query(query, substitutionValues: {"table": priv});
+      ProviderModel providerModel = ProviderModel();
+      for (final row in results) {
+        print(row);
+        providerModel.setProvider("provider");
+        providerModel.setRate("rate");
+        providerModel.setUpdatedAt("udpated");
+      }
+      providerModels.add(providerModel);
+    }*/
+    return providerModels;
   }
   // #enddocregion RWS-build
   // #docregion RWS-var

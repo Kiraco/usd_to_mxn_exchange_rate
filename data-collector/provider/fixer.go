@@ -3,6 +3,7 @@ package provider
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/google/uuid"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -10,14 +11,14 @@ import (
 )
 
 const (
-	baseURL  = "http://data.fixer.io/api/"
-	apiKey   = "?access_key=9b8dd1de33a10e6362f5b769359896c9"
-	endPoint = "latest"
-	symbols  = "&symbols=USD,MXN"
+	fixerBaseURL = "http://data.fixer.io/api/"
+	apiKey       = "?access_key=9b8dd1de33a10e6362f5b769359896c9"
+	endPoint     = "latest"
+	symbols      = "&symbols=USD,MXN"
 )
 
 func getTodaysFixerRate() (rate string, date string) {
-	apiURL := baseURL + endPoint + apiKey + symbols
+	apiURL := fixerBaseURL + endPoint + apiKey + symbols
 	r, err := http.Get(apiURL)
 	if err != nil {
 		fmt.Println(err)
@@ -44,6 +45,7 @@ func getTodaysFixerRate() (rate string, date string) {
 func GetFixerProvider() Provider {
 	rate, date := getTodaysFixerRate()
 	return Provider{
+		ID:        uuid.New(),
 		Name:      "Fixer",
 		Rate:      rate,
 		UpdatedAt: date,

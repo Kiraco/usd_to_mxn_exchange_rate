@@ -1,36 +1,45 @@
 package provider
 
 import (
+	"fmt"
+	"github.com/google/uuid"
 	"io/ioutil"
 	"log"
 	"net/http"
-	"net/url"
 	"regexp"
-	"strings"
+	"time"
 )
 
+const (
+	baseURL = "https://www.banxico.org.mx/SieAPIRest/service/v1/series/SF43718/datos/"
+	token   = "a3dff2a684d2cea59e6abb5a69ebfefd2b3c1ed7c6635fd905837abb97098d2c"
+)
+
+func getBanxicoFormattedDate() (api string, db string) {
+	date := time.Now()
+	day := ""
+	month := ""
+	if date.Day() < 10 {
+		day = fmt.Sprintf("%d%d", 0, date.Day())
+	} else {
+		day = fmt.Sprintf("%d", date.Day())
+	}
+	if date.Month() < 10 {
+		month = fmt.Sprintf("%d%d", 0, date.Month())
+	} else {
+		month = fmt.Sprintf("%d", date.Month())
+	}
+	fmt.Println(day)
+	return fmt.Sprintf("%d-%s-%s", date.Year(), month, "26"), fmt.Sprintf("%s/%s/%d", "26", month, date.Year())
+}
 func getTodaysBanxicoRate() string {
-	apiURL := "http://www.banxico.org.mx/tipcamb/tipCamIHAction.do"
-	data := url.Values{}
-	dateString := getDate()
-	data.Set("idioma", "sp")
-	data.Set("fechaInicial", dateString)
-	data.Set("fechaFinal", dateString)
-	data.Set("salida", "HTML")
-
-	client := &http.Client{}
-	r, err := http.NewRequest("POST", apiURL, strings.NewReader(data.Encode())) // URL-encoded payload
+	date, _ := getBanxicoFormattedDate()
+	apiURL := baseURL + date + "/" + date + "/?token=" + token
+	r, err := http.Get(apiURL)
 	if err != nil {
-		println(err)
+		fmt.Println(err)
 	}
-	r.Header.Add("Content-Type", "application/x-www-form-urlencoded")
-	r.Header.Add("Access-Control-Allow-Origin", "*")
-
-	resp, err := client.Do(r)
-	if err != nil {
-		println(err)
-	}
-	body, err := ioutil.ReadAll(resp.Body)
+	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		log.Printf("Error reading body: %v", err)
 	}
@@ -41,9 +50,11 @@ func getTodaysBanxicoRate() string {
 
 // GetBanxicoProvider - gets Banxico provider
 func GetBanxicoProvider() Provider {
+	_, date := getBanxicoFormattedDate()
 	return Provider{
+		ID:        uuid.New(),
 		Name:      "Banxico",
 		Rate:      getTodaysBanxicoRate(),
-		UpdatedAt: getDate(),
+		UpdatedAt: date,
 	}
 }

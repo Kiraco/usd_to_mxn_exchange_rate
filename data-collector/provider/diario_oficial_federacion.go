@@ -1,25 +1,49 @@
 package provider
 
 import (
+	"fmt"
+	"github.com/google/uuid"
 	"io/ioutil"
 	"log"
 	"net/http"
 	"net/url"
 	"regexp"
 	"strings"
+	"time"
 )
 
+const (
+	diarioBaseURL = "http://www.banxico.org.mx/tipcamb/tipCamIHAction.do"
+)
+
+func getDiarioFormattedDate() string {
+	date := time.Now()
+	day := ""
+	month := ""
+	if date.Day() < 10 {
+		day = fmt.Sprintf("%d%d", 0, date.Day())
+	} else {
+		day = fmt.Sprintf("%d", date.Day())
+	}
+	if date.Month() < 10 {
+		month = fmt.Sprintf("%d%d", 0, date.Month())
+	} else {
+		month = fmt.Sprintf("%d", date.Month())
+	}
+	fmt.Println(day)
+	return fmt.Sprintf("%s/%s/%d", "26", month, date.Year())
+}
+
 func getTodaysDiarioRate() string {
-	apiURL := "http://www.banxico.org.mx/tipcamb/tipCamIHAction.do"
 	data := url.Values{}
-	dateString := getDate()
+	dateString := getDiarioFormattedDate()
 	data.Set("idioma", "sp")
 	data.Set("fechaInicial", dateString)
 	data.Set("fechaFinal", dateString)
 	data.Set("salida", "HTML")
 
 	client := &http.Client{}
-	r, err := http.NewRequest("POST", apiURL, strings.NewReader(data.Encode())) // URL-encoded payload
+	r, err := http.NewRequest("POST", diarioBaseURL, strings.NewReader(data.Encode()))
 	if err != nil {
 		println(err)
 	}
@@ -42,8 +66,9 @@ func getTodaysDiarioRate() string {
 // GetDiarioOficialFederacionProvider - returns diario oficial provider
 func GetDiarioOficialFederacionProvider() Provider {
 	return Provider{
+		ID:        uuid.New(),
 		Name:      "Diario Oficial de la Federacion",
 		Rate:      getTodaysDiarioRate(),
-		UpdatedAt: getDate(),
+		UpdatedAt: getDiarioFormattedDate(),
 	}
 }

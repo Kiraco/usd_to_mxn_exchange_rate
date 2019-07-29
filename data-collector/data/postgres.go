@@ -3,29 +3,43 @@ package data
 import (
 	"database/sql"
 	"fmt"
-	_ "github.com/lib/pq"
+	provider "github.com/Kiraco/usd_to_mxn_exchange_rate/data-collector/provider"
 )
 
 const (
-	DB_USER     = "postgres"
-	DB_PASSWORD = "postgres"
-	DB_NAME     = "usd_to_mxn"
+	host     = "raja.db.elephantsql.com"
+	user     = "qfdzwxrh"
+	password = "PEmibq-PXzzFiEpMV9iHWQbYO4JHqpIy"
+	dbName   = "qfdzwxrh"
+	port     = "5432"
 )
 
-func ConnectDB() {
-	psqlInfo := fmt.Sprintf("user=%s "+
-		"password=%s dbname=%s sslmode=disable", DB_USER, DB_PASSWORD, DB_NAME)
-	db, err := sql.Open("postgres", psqlInfo)
+//ConnectDB connects to db
+func ConnectDB() *sql.DB {
+	psqlInfo := fmt.Sprintf("host=%s port=%s user=%s "+
+		"password=%s dbname=%s sslmode=disable", host, port, user, password, dbName)
+	database, err := sql.Open("postgres", psqlInfo)
 	if err != nil {
 		panic(err)
 	}
-	defer db.Close()
 
-	err = db.Ping()
+	err = database.Ping()
 	if err != nil {
 		panic(err)
 	}
 
 	fmt.Println("Successfully connected!")
+	return database
+}
 
+//InsertInto inserts into table
+func InsertInto(table string, prov provider.Provider, database *sql.DB) {
+	sqlStatement := `
+		INSERT INTO ` + table + ` ("id", "name", "rate", "updatedAt")
+		VALUES ($1, $2, $3, $4)
+	`
+	_, err := database.Query(sqlStatement, prov.ID, prov.Name, prov.Rate, prov.UpdatedAt)
+	if err != nil {
+		panic(err)
+	}
 }

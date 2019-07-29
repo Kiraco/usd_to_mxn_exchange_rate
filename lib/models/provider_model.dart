@@ -1,6 +1,6 @@
 class ProviderModel {
   String _provider = "";
-  String _value = "";
+  String _rate = "";
   String _updatedAt = "";
 
   void setUpdatedAt(String date) {
@@ -11,16 +11,16 @@ class ProviderModel {
     _provider = provider;
   }
 
-  void setValue(String value) {
-    _value = value;
+  void setRate(String value) {
+    _rate = value;
   }
 
   String getProvider() {
     return _provider;
   }
 
-  String getValue() {
-    return _value;
+  String getRate() {
+    return _rate;
   }
 
   String getUpdatedAt() {
