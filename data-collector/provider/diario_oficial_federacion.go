@@ -16,7 +16,7 @@ const (
 	diarioBaseURL = "http://www.banxico.org.mx/tipcamb/tipCamIHAction.do"
 )
 
-func getDiarioFormattedDate() string {
+func getDiarioFormattedDate() (api string, db time.Time) {
 	date := time.Now()
 	day := ""
 	month := ""
@@ -30,12 +30,12 @@ func getDiarioFormattedDate() string {
 	} else {
 		month = fmt.Sprintf("%d", date.Month())
 	}
-	return fmt.Sprintf("%s/%s/%d", day, month, date.Year())
+	return fmt.Sprintf("%s/%s/%d", day, month, date.Year()), date
 }
 
 func getTodaysDiarioRate() string {
 	data := url.Values{}
-	dateString := getDiarioFormattedDate()
+	dateString, _ := getDiarioFormattedDate()
 	data.Set("idioma", "sp")
 	data.Set("fechaInicial", dateString)
 	data.Set("fechaFinal", dateString)
@@ -64,10 +64,11 @@ func getTodaysDiarioRate() string {
 
 // GetDiarioOficialFederacionProvider - returns diario oficial provider
 func GetDiarioOficialFederacionProvider() Provider {
+	_, dbString := getDiarioFormattedDate()
 	return Provider{
 		ID:        uuid.New(),
 		Name:      "Diario Oficial de la Federacion",
 		Rate:      getTodaysDiarioRate(),
-		UpdatedAt: getDiarioFormattedDate(),
+		UpdatedAt: dbString,
 	}
 }

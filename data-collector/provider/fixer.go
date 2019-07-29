@@ -17,7 +17,7 @@ const (
 	symbols      = "&symbols=USD,MXN"
 )
 
-func getTodaysFixerRate() (rate string, date string) {
+func getTodaysFixerRate() (rate string, date time.Time) {
 	apiURL := fixerBaseURL + endPoint + apiKey + symbols
 	r, err := http.Get(apiURL)
 	if err != nil {
@@ -33,7 +33,7 @@ func getTodaysFixerRate() (rate string, date string) {
 		panic(err)
 	}
 	timestamp := dat["timestamp"].(float64)
-	formatedDate := time.Unix(int64(timestamp), 0).Format("02/01/2006")
+	formatedDate := time.Unix(int64(timestamp), 0)
 	rates := dat["rates"].(map[string]interface{})
 	mxn := rates["MXN"].(float64)
 	usd := rates["USD"].(float64)

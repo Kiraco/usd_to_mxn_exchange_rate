@@ -15,7 +15,7 @@ const (
 	token   = "a3dff2a684d2cea59e6abb5a69ebfefd2b3c1ed7c6635fd905837abb97098d2c"
 )
 
-func getBanxicoFormattedDate() (api string, db string) {
+func getBanxicoFormattedDate() (api string, db time.Time) {
 	date := time.Now()
 	day := ""
 	month := ""
@@ -29,7 +29,7 @@ func getBanxicoFormattedDate() (api string, db string) {
 	} else {
 		month = fmt.Sprintf("%d", date.Month())
 	}
-	return fmt.Sprintf("%d-%s-%s", date.Year(), month, "26"), fmt.Sprintf("%s/%s/%d", day, month, date.Year())
+	return fmt.Sprintf("%d-%s-%s", date.Year(), month, day), date
 }
 
 func getTodaysBanxicoRate() string {

@@ -48,7 +48,7 @@ func GetRates(w http.ResponseWriter, req *http.Request) {
 	providers := []provider.Provider{}
 	for _, table := range tables {
 		tmpProvider := provider.Provider{}
-		query := fmt.Sprintf("SELECT * FROM %s LIMIT 1", table)
+		query := fmt.Sprintf("SELECT * FROM %s ORDER BY \"updatedAt\" DESC LIMIT 1", table)
 		db.QueryRow(query).Scan(&tmpProvider.ID, &tmpProvider.Name, &tmpProvider.Rate, &tmpProvider.UpdatedAt)
 		providers = append(providers, tmpProvider)
 	}
