@@ -37,4 +37,16 @@ class ProviderModel {
   Map toJson() {
     return {'ID': _id, 'Name': _name, 'Rate': _rate, 'UpdatedAt': _updatedAt};
   }
+
+  String toString() {
+    return "{\"ID\":\"" +
+        _id +
+        "\", \"Name\":\"" +
+        _name +
+        "\", \"Rate\":\"" +
+        _rate +
+        "\", \"UpdatedAt\":\"" +
+        _updatedAt +
+        "\"}";
+  }
 }
