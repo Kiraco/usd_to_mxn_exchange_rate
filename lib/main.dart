@@ -1,5 +1,5 @@
 import 'package:flutter_web/material.dart';
-import 'package:usd_to_mxn_exchange_rate/login_signup_page.dart';
+import 'package:usd_to_mxn_exchange_rate/home_page.dart';
 
 void main() => runApp(MyApp());
 
@@ -12,7 +12,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: LoginSignUpPage(),
+      home: HomePage(),
     );
   }
 }

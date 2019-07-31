@@ -2,16 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter_web/material.dart';
 import 'package:usd_to_mxn_exchange_rate/models/provider_model.dart';
-import 'package:http/http.dart' as http;
-
-// Performs the fetch of rates from go server
-class API {
-  static Future getProvidersData() {
-    var url = "http://localhost:3000/rates";
-    var headers = {"Content-Type": "application/json"};
-    return http.get(url, headers: headers);
-  }
-}
+import 'package:usd_to_mxn_exchange_rate/api.dart';
 
 class ExchangeRatesState extends State<ExchangeRates> {
   final _biggerFont = const TextStyle(
@@ -25,7 +16,7 @@ class ExchangeRatesState extends State<ExchangeRates> {
   // we get the providers, is a Future and resolved during the initState() of the view
   var providers = List<ProviderModel>();
   _getProviders() {
-    API.getProvidersData().then((response) {
+    API.GetProvidersData().then((response) {
       setState(() {
         Iterable list = json.decode(response.body);
         providers = list.map((model) => ProviderModel.fromJson(model)).toList();
